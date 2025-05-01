@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bulk Email Sender</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.js"></script>
+</head>
+
+<body class="bg-gray-100 min-h-screen flex items-center justify-center p-4">
+    <div class="bg-white rounded-lg shadow-lg p-8 max-w-md w-full">
+        <h1 class="text-2xl font-bold text-gray-800 mb-6 text-center">Bulk Email Sender</h1>
+        {% csrf_token %}
+        <form action="{% url 'email_view_bulk' %}" method="post" class="space-y-6">
+
+
+            <div>
+                <label for="email" class="block text-sm font-medium text-gray-700 mb-1">Email Addresses</label>
+                <p class="text-xs text-gray-500 mb-2">Paste emails from Google Sheets (accepts emails separated by
+                    commas, tabs, spaces, or newlines)</p>
+                <textarea name="email" id="email" rows="8"
+                    class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    placeholder="example1@email.com, example2@email.com&#10;example3@email.com example4@email.com&#10;example5@email.com&#9;example6@email.com"></textarea>
+            </div>
+
+            <div>
+                <button type="submit"
+                    class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                    Send Emails
+                </button>
+            </div>
+        </form>
+
+
+    </div>
+    {{ response_data }}
+
+</body>
+
+</html>
