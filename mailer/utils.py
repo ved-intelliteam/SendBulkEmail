@@ -19,7 +19,7 @@ def send_email(receiver_mail,receiver_name, verification_url=None, Subject=None,
         None
     """
     print("got call for mailer utility function ")
-    from_email = "info@docextract.ai"
+    from_email = "ved@docextract.ai"
     subject = Subject or "Verify your Email - DocExtract"
     text_message = Message or f"Email Verification Link: {verification_url}"
     receiver_email = [receiver_mail]

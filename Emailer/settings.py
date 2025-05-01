@@ -132,7 +132,7 @@ EMAIL_HOST = "smtpout.secureserver.net"
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_USE_SSL = False
-EMAIL_HOST_USER = "info@docextract.ai"
+EMAIL_HOST_USER = "ved@docextract.ai"
 EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
 
-DEFAULT_FROM_EMAIL = "info@docextract.ai"
+DEFAULT_FROM_EMAIL = "ved@docextract.ai"
