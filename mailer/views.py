@@ -140,3 +140,83 @@ def parse_recipients(raw_input):
             logger.warning(f"Invalid email format: {email}")
 
     return recipients
+
+
+@csrf_exempt
+def follow_up_email_view(request):
+    """View for handling follow-up email sends via AWS SES."""
+    logger.info("Follow-up email view called")
+
+    if request.method == "POST":
+        raw_input = request.POST.get("email", "")
+        logger.debug(f"Raw data received: {raw_input}")
+
+        # Process recipients from input
+        recipients = parse_recipients(raw_input)
+
+        if not recipients:
+            logger.warning("No valid email/name pairs provided")
+            return JsonResponse(
+                {"message": "No valid email/name pairs provided."}, status=400
+            )
+
+        logger.info(f"Processed {len(recipients)} valid recipients")
+
+        # Send follow-up emails
+        try:
+            response = send_bulk_email_with_ses(
+                recipients=recipients,
+                subject="Re:Still Copy-Pasting Data Manually?",
+                html_template="mailer/temp3.html",
+                use_template=False,
+                ses_template_name="YourSESTemplateName",
+            )
+
+            # Process results
+            successful_emails = []
+            failed_emails = []
+
+            # Handle bulk templated email response structure
+            if isinstance(response, dict) and "Status" in response:
+                for status_item in response.get("Status", []):
+                    recipient = status_item.get("Recipient")
+                    if status_item.get("Status") == "Success":
+                        successful_emails.append(recipient)
+                    else:
+                        failed_emails.append(recipient)
+
+            # Handle individual email responses
+            elif isinstance(response, list):
+                for item in response:
+                    if item.get("status") == "success":
+                        successful_emails.append(item.get("email"))
+                    else:
+                        failed_emails.append(item.get("email"))
+
+            logger.info(
+                f"Follow-up email sending completed. Successful: {len(successful_emails)}, Failed: {len(failed_emails)}"
+            )
+
+        except Exception as e:
+            logger.error(f"Follow-up email sending failed: {str(e)}")
+            return JsonResponse(
+                {"message": f"Follow-up email sending failed: {str(e)}"}, status=500
+            )
+
+        # Prepare response data
+        response_data = {
+            "message": f"Follow-up email sending completed. {len(successful_emails)} successful, {len(failed_emails)} failed.",
+            "successful_count": len(successful_emails),
+            "failed_count": len(failed_emails),
+            "successful": successful_emails[:10],
+            "failed": failed_emails[:10],
+        }
+
+        return render(
+            request,
+            "mailer/followup-sendemail.html",
+            context={"response_data": response_data},
+        )
+    else:
+        # GET or other methods
+        return render(request, "mailer/followup-sendemail.html")

@@ -183,3 +183,42 @@ def send_bulk_email_with_ses(
             )
 
     return responses
+
+
+def send_follow_up_email(
+    receiver_mail,
+    receiver_name,
+):
+    """
+    Send a follow-up email with a verification link using a custom HTML template.
+
+    Args:
+        receiver_mail (str): The email address of the recipient.
+        verification_url (str): The verification URL to be included in the email.
+        Subject (str, optional): Optional subject override.
+        Message (str, optional): Optional plain text message.
+        user (CustomUser, optional): The user object for personalized content.
+        html_template (str): Path to the HTML template.
+
+    Returns:
+        None
+    """
+    print("got call for mailer utility function ")
+    from_email = "ved@docextract.ai"
+    subject = "Re: Still Copy-Pasting Data Manually?"
+    receiver_mail = [receiver_mail]
+    html_template = "mailer/followup_email_template.html"
+
+    print("template is available")
+    html_message = render_to_string(html_template, {"name": receiver_name.title()})
+
+    response = SES_CLIENT.send_email(
+        Source=from_email,
+        Destination={"ToAddresses": receiver_mail},
+        Message={
+            "Subject": {"Data": subject},
+            "Body": {
+                "Html": {"Data": html_message},
+            },
+        },
+    )
