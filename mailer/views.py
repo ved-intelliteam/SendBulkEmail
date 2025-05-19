@@ -167,7 +167,7 @@ def follow_up_email_view(request):
             response = send_bulk_email_with_ses(
                 recipients=recipients,
                 subject="Re:Still Copy-Pasting Data Manually?",
-                html_template="mailer/temp3.html",
+                html_template="mailer/follow.html",
                 use_template=False,
                 ses_template_name="YourSESTemplateName",
             )

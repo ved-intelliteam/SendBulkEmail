@@ -5,21 +5,40 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Bulk Email Sender</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
 
 <body class="bg-gray-100 min-h-screen flex items-center justify-center p-4">
     <div class="bg-white rounded-lg shadow-lg p-8 max-w-md w-full">
         <h1 class="text-2xl font-bold text-gray-800 mb-6 text-center">Bulk Email Sender</h1>
-        {% csrf_token %}
-        <form action="{% url 'follow_up_email_view' %}" method="post" class="space-y-6">
 
+        <!-- Flash message for success/error (if using Django messages framework) -->
+        {% if messages %}
+        <div class="mb-4">
+            {% for message in messages %}
+            <div class="p-3 rounded text-sm font-medium
+                        {% if message.tags == 'success' %}
+                            bg-green-100 text-green-800
+                        {% elif message.tags == 'error' %}
+                            bg-red-100 text-red-800
+                        {% else %}
+                            bg-gray-100 text-gray-800
+                        {% endif %}
+                    ">
+                {{ message }}
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <form action="{% url 'follow_up_email_view' %}" method="post" class="space-y-6">
+            {% csrf_token %}
 
             <div>
                 <label for="email" class="block text-sm font-medium text-gray-700 mb-1">Email Addresses</label>
-                <p class="text-xs text-gray-500 mb-2">Paste emails from Google Sheets (accepts emails separated by
-                    commas, tabs, spaces, or newlines)</p>
-                <textarea name="email" id="email" rows="8"
+                <p class="text-xs text-gray-500 mb-2">Paste emails from Google Sheets. Accepts comma, space, tab, or
+                    newline-separated addresses.</p>
+                <textarea name="email" id="email" rows="8" required
                     class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                     placeholder="example1@email.com, example2@email.com&#10;example3@email.com example4@email.com&#10;example5@email.com&#9;example6@email.com"></textarea>
             </div>
@@ -32,10 +51,12 @@
             </div>
         </form>
 
-
+        {% if response_data %}
+        <div class="mt-6 text-sm text-gray-700 whitespace-pre-line bg-gray-50 p-4 rounded border border-gray-200">
+            {{ response_data }}
+        </div>
+        {% endif %}
     </div>
-    {{ response_data }}
-
 </body>
 
 </html>
